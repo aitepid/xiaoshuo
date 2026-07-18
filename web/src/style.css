@@ -1,0 +1,297 @@
+@import "tailwindcss";
+
+:root {
+  font-family:
+    "Noto Serif SC",
+    "Source Han Serif SC",
+    "PingFang SC",
+    "Hiragino Sans GB",
+    serif;
+  --app-bg: radial-gradient(circle at 0% -20%, #fde9bf 0, #f7f2de 35%, #f3f0e6 100%);
+  --text-main: #172435;
+  --chip-bg: #ffffffb3;
+  --chip-text: #203347;
+  --chip-border: #1e293b1a;
+  --btn-main: #d97706;
+  --btn-main-hover: #b45309;
+  --field-bg: #ffffffcc;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+
+:root[data-theme="dark"] {
+  --app-bg: radial-gradient(circle at 0% -20%, #253248 0, #131c2f 35%, #090d17 100%);
+  --text-main: #eaf2ff;
+  --chip-bg: #ffffff12;
+  --chip-text: #dae7ff;
+  --chip-border: #ffffff26;
+  --btn-main: #f59e0b;
+  --btn-main-hover: #d97706;
+  --field-bg: #0f172acc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--app-bg);
+}
+
+#app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-top: var(--safe-top);
+  padding-right: var(--safe-right);
+  padding-bottom: var(--safe-bottom);
+  padding-left: var(--safe-left);
+}
+
+a {
+  color: inherit;
+}
+
+.nav-chip {
+  border-radius: 9999px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-bg);
+  color: var(--chip-text);
+  padding: 0.45rem 0.9rem;
+  text-decoration: none;
+  transition:
+    transform 220ms ease,
+    background-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.nav-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(15, 23, 42, 0.12);
+}
+
+.nav-chip:active {
+  transform: translateY(0);
+}
+
+.card-panel {
+  border-radius: 1rem;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: rgba(255, 255, 255, 0.75);
+  padding: 1rem;
+  backdrop-filter: blur(6px);
+}
+
+:root[data-theme="dark"] .card-panel {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.card-copy {
+  margin-top: 0.4rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: rgb(71 85 105);
+}
+
+:root[data-theme="dark"] .card-copy {
+  color: rgb(203 213 225);
+}
+
+.field-input {
+  width: 100%;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(15, 23, 42, 0.15);
+  background: var(--field-bg);
+  padding: 0.65rem 0.85rem;
+  color: inherit;
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.field-input:focus {
+  outline: none;
+  border-color: rgba(217, 119, 6, 0.7);
+  box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.14);
+}
+
+.btn-primary {
+  border: 0;
+  border-radius: 0.9rem;
+  background: var(--btn-main);
+  color: white;
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    filter 180ms ease,
+    background-color 180ms ease;
+}
+
+.btn-primary:hover {
+  background: var(--btn-main-hover);
+  filter: brightness(1.03);
+}
+
+.btn-primary:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.7);
+  color: inherit;
+  padding: 0.72rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 180ms ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+:root[data-theme="dark"] .btn-secondary {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+:root[data-theme="dark"] .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.tab-item {
+  display: block;
+  border-radius: 0.8rem;
+  padding: 0.55rem 0.25rem;
+  text-align: center;
+  text-decoration: none;
+  color: rgb(71 85 105);
+  transition: all 180ms ease;
+}
+
+.router-link-active.tab-item {
+  background: rgba(217, 119, 6, 0.15);
+  color: rgb(146 64 14);
+  font-weight: 700;
+}
+
+:root[data-theme="dark"] .tab-item {
+  color: rgb(203 213 225);
+}
+
+:root[data-theme="dark"] .router-link-active.tab-item {
+  background: rgba(251, 191, 36, 0.18);
+  color: rgb(254 240 138);
+}
+
+.field-error {
+  border-color: rgba(225, 29, 72, 0.55);
+  box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.13);
+}
+
+.error-text {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: rgb(225 29 72);
+}
+
+.skeleton-wave {
+  width: 100%;
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.2) 25%, rgba(148, 163, 184, 0.32) 37%, rgba(148, 163, 184, 0.2) 63%);
+  background-size: 400% 100%;
+  animation: skeleton 1.25s ease-in-out infinite;
+}
+
+@keyframes skeleton {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.toast-pop-enter-active,
+.toast-pop-leave-active {
+  transition: all 240ms ease;
+}
+
+.toast-pop-enter-from,
+.toast-pop-leave-to {
+  opacity: 0;
+  transform: translateY(-12px) scale(0.98);
+}
+
+.reader-shell {
+  transition:
+    background-color 320ms ease,
+    color 320ms ease,
+    border-color 320ms ease,
+    box-shadow 320ms ease;
+}
+
+.reader-shell article {
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+.reader-shell h2 {
+  letter-spacing: 0.02em;
+}
+
+.reader-theme-paper {
+  background: linear-gradient(180deg, #fffaf0 0%, #f7edd8 100%);
+  color: #3b2f22;
+}
+
+.reader-theme-light {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  color: #0f172a;
+}
+
+.reader-theme-mint {
+  background: linear-gradient(180deg, #f4fffb 0%, #e6f5ea 100%);
+  color: #1f3c2f;
+}
+
+:root[data-theme='dark'] .reader-theme-paper {
+  background: linear-gradient(180deg, #3a3328 0%, #272118 100%);
+  color: #f2e7d3;
+}
+
+:root[data-theme='dark'] .reader-theme-light {
+  background: linear-gradient(180deg, #1a2233 0%, #101827 100%);
+  color: #e8efff;
+}
+
+:root[data-theme='dark'] .reader-theme-mint {
+  background: linear-gradient(180deg, #16302b 0%, #0f221f 100%);
+  color: #daf6ea;
+}
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 280ms ease;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
