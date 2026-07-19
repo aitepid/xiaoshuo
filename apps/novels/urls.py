@@ -2,10 +2,12 @@ from rest_framework.routers import DefaultRouter
 from django.urls import include, path
 
 from .views import CategoryViewSet, ChapterViewSet, NovelViewSet
+from apps.agnes_views import AgnesViewSet
 
 router = DefaultRouter(trailing_slash=True)
 router.register("categories", CategoryViewSet, basename="categories")
 router.register("novels", NovelViewSet, basename="novels")
+router.register("agnes", AgnesViewSet, basename="agnes")
 
 chapter_list = ChapterViewSet.as_view({"get": "list"})
 chapter_detail = ChapterViewSet.as_view({"get": "retrieve"})

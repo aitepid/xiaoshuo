@@ -18,6 +18,7 @@ class TagSerializer(serializers.ModelSerializer):
 class NovelListSerializer(serializers.ModelSerializer):
     author_name = serializers.CharField(source="author.username", read_only=True)
     category = CategorySerializer(read_only=True)
+    chapters_count = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Novel
@@ -35,7 +36,11 @@ class NovelListSerializer(serializers.ModelSerializer):
             "rating_avg",
             "updated_at",
             "author_name",
+            "chapters_count",
         ]
+    
+    def get_chapters_count(self, obj):
+        return obj.chapters.count()
 
 
 class NovelDetailSerializer(NovelListSerializer):

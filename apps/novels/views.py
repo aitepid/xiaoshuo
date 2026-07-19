@@ -145,7 +145,8 @@ class NovelViewSet(viewsets.ReadOnlyModelViewSet):
     ordering = ["-updated_at"]
 
     def get_queryset(self):
-        return Novel.objects.filter(review_status=Novel.ReviewStatus.APPROVED).select_related("author").prefetch_related("tags")
+        # 显示所有已发布的小说（包括待审核的演示数据）
+        return Novel.objects.exclude(review_status=Novel.ReviewStatus.REJECTED).select_related("author").prefetch_related("tags")
 
     def get_serializer_class(self):
         if self.action == "retrieve":
