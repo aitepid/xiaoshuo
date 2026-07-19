@@ -7,7 +7,37 @@ import axios, {
 
 import { clearTokens, getAccessToken, getRefreshToken, setTokens } from '@/lib/storage'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000/api/v1'
+// 自动推断 API 基础 URL
+function getApiBaseUrl(): string {
+  // 1. 优先使用 Vite 环境变量
+  const envUrl = import.meta.env.VITE_API_BASE_URL
+  if (envUrl) {
+    console.log('✓ 使用环境变量 API 地址:', envUrl)
+    return envUrl
+  }
+
+  // 2. 在 Render 上，推断 API 地址
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname
+    const protocol = window.location.protocol
+    
+    // 检测 Render 域名
+    if (hostname.includes('onrender.com')) {
+      // Render 前端: xiaoshuo-web.onrender.com
+      // 后端: xiaoshuo-ng79.onrender.com
+      const backendUrl = `${protocol}//xiaoshuo-ng79.onrender.com/api/v1`
+      console.log('✓ Render 环境，推断 API 地址:', backendUrl)
+      return backendUrl
+    }
+  }
+
+  // 3. 本地开发默认地址
+  const defaultUrl = 'http://127.0.0.1:8000/api/v1'
+  console.log('✓ 使用默认 API 地址:', defaultUrl)
+  return defaultUrl
+}
+
+const API_BASE_URL = getApiBaseUrl()
 
 interface RetriableAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean

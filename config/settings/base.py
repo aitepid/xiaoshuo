@@ -165,8 +165,35 @@ def _parse_csv_env(key: str) -> list[str]:
     return [item.strip() for item in env(key, "").split(",") if item.strip()]
 
 
+# CORS 配置
 CORS_ALLOWED_ORIGINS = _parse_csv_env("CORS_ALLOWED_ORIGINS")
+
+# 如果没有显式配置，在生产环境中自动允许 Render 域名
+if not CORS_ALLOWED_ORIGINS and not DEBUG:
+    CORS_ALLOWED_ORIGINS = [
+        "https://xiaoshuo-web.onrender.com",
+        "https://xiaoshuo-ng79.onrender.com",
+    ]
+
+# 如果还是为空，允许所有本地开发请求
+if not CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:5173",
+        "http://localhost:8080",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:8080",
+    ]
+
 CORS_ALLOW_CREDENTIALS = True
+
+# 记录 CORS 配置（用于调试）
+import sys
+if "manage.py" in sys.argv or True:  # 总是输出
+    print(f"\n{'='*70}")
+    print(f"CORS 配置:")
+    print(f"  DEBUG: {DEBUG}")
+    print(f"  ALLOWED_ORIGINS: {CORS_ALLOWED_ORIGINS}")
+    print(f"{'='*70}\n")
 
 CACHES = {
     "default": {
