@@ -83,7 +83,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
                             'author': author,
                             'category': category,
                             'summary': novel_data['summary'],
-                            'status': Novel.Status.ONGOING,
+                            'status': Novel.PublishStatus.ONGOING,
                             'review_status': Novel.ReviewStatus.APPROVED,
                             'word_count': 0,
                         }
