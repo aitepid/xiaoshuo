@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小说平台 - 注册诊断工具</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+        h1 { 
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .section:last-child { border-bottom: none; }
+        .section-title {
+            color: #667eea;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover { background: #5568d3; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .log {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            font-size: 12px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .log-item { margin-bottom: 8px; }
+        .log-success { color: #22c55e; }
+        .log-error { color: #ef4444; }
+        .log-info { color: #3b82f6; }
+        .status {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .status.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 小说平台 - 注册诊断工具</h1>
+        <p class="subtitle">测试前端和后端的连接，诊断注册问题</p>
+
+        <div class="section">
+            <div class="section-title">系统诊断</div>
+            <div id="apiStatus" class="status info">检查中...</div>
+            <button onclick="checkApi()">检查 API 连接</button>
+        </div>
+
+        <div class="section">
+            <div class="section-title">测试注册</div>
+            
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="username" placeholder="例: test_author_123" value="test_author_">
+            </div>
+            
+            <div class="form-group">
+                <label>邮箱</label>
+                <input type="email" id="email" placeholder="例: author@test.com" value="test@test.com">
+            </div>
+            
+            <div class="form-group">
+                <label>手机号</label>
+                <input type="tel" id="phone" placeholder="例: +8613800000000" value="+8613800000000">
+            </div>
+            
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="password" placeholder="至少 8 位" value="TestPassword123">
+            </div>
+            
+            <div class="form-group">
+                <label>身份</label>
+                <select id="role">
+                    <option value="reader">读者</option>
+                    <option value="author" selected>作者</option>
+                </select>
+            </div>
+            
+            <button onclick="testRegister()">测试注册</button>
+        </div>
+
+        <div class="section">
+            <div class="section-title">诊断日志</div>
+            <div class="log" id="log"></div>
+            <button onclick="clearLog()" style="margin-top: 10px; background: #999;">清空日志</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = detectApiUrl();
+
+        function detectApiUrl() {
+            // 从环境变量或自动推断
+            const env = import.meta?.env?.VITE_API_BASE_URL;
+            if (env) return env;
+
+            const hostname = window.location.hostname;
+            if (hostname.includes('onrender.com')) {
+                return 'https://xiaoshuo-ng79.onrender.com/api/v1';
+            }
+            return 'http://127.0.0.1:8000/api/v1';
+        }
+
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            const className = `log-${type}`;
+            logEl.innerHTML += `<div class="log-item"><span class="${className}">[${time}]</span> ${escapeHtml(message)}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        async function checkApi() {
+            const statusEl = document.getElementById('apiStatus');
+            clearLog();
+            
+            try {
+                log(`🔍 检查 API: ${API_BASE}`);
+                
+                const res = await fetch(`${API_BASE.replace('/api/v1', '')}/api/diagnostics`);
+                const data = await res.json();
+                
+                if (res.ok) {
+                    log('✓ 后端服务正常', 'success');
+                    log(`DEBUG: ${data.environment?.debug}`);
+                    log(`CORS Origins: ${data.environment?.cors_origins || 'Not configured'}`);
+                    log(`Frontend URL: ${data.debug_info?.request_origin}`);
+                    
+                    statusEl.className = 'status success';
+                    statusEl.textContent = '✓ API 连接正常';
+                } else {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+            } catch (error) {
+                log(`✗ API 检查失败: ${error.message}`, 'error');
+                statusEl.className = 'status error';
+                statusEl.textContent = `✗ API 连接失败: ${error.message}`;
+            }
+        }
+
+        async function testRegister() {
+            clearLog();
+            
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+
+            // 生成唯一用户名
+            const timestamp = Date.now();
+            const finalUsername = username + timestamp;
+
+            try {
+                log(`📝 尝试注册...`);
+                log(`用户名: ${finalUsername}`);
+                log(`邮箱: ${email}`);
+                log(`角色: ${role}`);
+                
+                const payload = {
+                    username: finalUsername,
+                    email: email + timestamp.toString().slice(-4),  // 使邮箱唯一
+                    phone,
+                    password,
+                    role
+                };
+
+                log(`API 地址: ${API_BASE}/auth/register`);
+                log(`请求数据: ${JSON.stringify(payload, null, 2)}`);
+
+                const res = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                
+                log(`响应状态: ${res.status}`);
+                log(`响应数据: ${JSON.stringify(data, null, 2)}`);
+
+                if (res.ok) {
+                    log('✓ 注册成功！', 'success');
+                    log(`已创建用户: ${finalUsername}`, 'success');
+                } else {
+                    log(`✗ 注册失败 (${res.status})`, 'error');
+                    if (data.detail) log(data.detail, 'error');
+                    Object.entries(data).forEach(([key, value]) => {
+                        if (key !== 'detail') {
+                            log(`${key}: ${JSON.stringify(value)}`, 'error');
+                        }
+                    });
+                }
+            } catch (error) {
+                log(`✗ 请求失败: ${error.message}`, 'error');
+                log(`错误详情: ${error.stack}`);
+            }
+        }
+
+        // 页面加载时自动检查
+        window.addEventListener('load', () => {
+            log(`页面加载完成`);
+            log(`API 基础 URL: ${API_BASE}`);
+            checkApi();
+        });
+    </script>
+</body>
+</html>
