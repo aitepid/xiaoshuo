@@ -2,18 +2,25 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
+import CategoryNav from '@/components/CategoryNav.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import { getErrorMessage } from '@/lib/error'
 import http from '@/lib/http'
 import { toRelativeApiPath } from '@/lib/pagination'
 
+interface Category {
+  id: number
+  name: string
+  description: string
+}
+
 interface NovelCard {
   id: number
   title: string
   cover_url: string
   summary: string
-  category: string
+  category: Category | null
   word_count: number
   status: string
   author_name: string
@@ -30,15 +37,25 @@ const errorText = ref('')
 const novels = ref<NovelCard[]>([])
 const nextPath = ref('/novels')
 const listSentinel = ref<HTMLElement | null>(null)
+const selectedCategoryId = ref<number | null>(null)
 
 let observer: IntersectionObserver | null = null
+
+function buildNovelPath(): string {
+  const params = new URLSearchParams()
+  if (selectedCategoryId.value) {
+    params.append('category', selectedCategoryId.value.toString())
+  }
+  const queryString = params.toString()
+  return queryString ? `/novels?${queryString}` : '/novels'
+}
 
 async function fetchNovels(reset = false): Promise<void> {
   if (reset) {
     loading.value = true
     errorText.value = ''
     novels.value = []
-    nextPath.value = '/novels'
+    nextPath.value = buildNovelPath()
   } else {
     loadingMore.value = true
   }
@@ -53,6 +70,11 @@ async function fetchNovels(reset = false): Promise<void> {
     loading.value = false
     loadingMore.value = false
   }
+}
+
+function handleCategoryChange(categoryId: number | null): void {
+  selectedCategoryId.value = categoryId
+  void fetchNovels(true)
 }
 
 function observeBottom(): void {
@@ -102,6 +124,9 @@ onBeforeUnmount(() => {
         当前已完成阶段 1：路由守卫、Token 自动刷新、Pinia 状态层、Tailwind 主题系统与页面切换骨架。
       </p>
     </div>
+
+    <CategoryNav @category-change="handleCategoryChange" />
+
     <div v-if="loading" class="grid gap-4 md:grid-cols-3">
       <div class="card-panel space-y-3" v-for="idx in 3" :key="idx">
         <SkeletonBlock height="18px" rounded="12px" />
@@ -147,7 +172,11 @@ onBeforeUnmount(() => {
         class="card-panel block transition hover:-translate-y-0.5"
       >
         <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ novel.title }}</h3>
-        <p class="mt-1 text-xs text-slate-500 dark:text-slate-300">{{ novel.category }} · {{ novel.word_count }} 字 · {{ novel.author_name }}</p>
+        <p class="mt-1 text-xs text-slate-500 dark:text-slate-300">
+          <span v-if="novel.category">{{ novel.category.name }}</span>
+          <span v-else>未分类</span>
+          · {{ novel.word_count }} 字 · {{ novel.author_name }}
+        </p>
         <p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-700 dark:text-slate-200">{{ novel.summary || '暂无简介。' }}</p>
       </RouterLink>
     </div>
