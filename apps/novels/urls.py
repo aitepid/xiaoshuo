@@ -3,7 +3,7 @@ from django.urls import include, path
 
 from .views import CategoryViewSet, ChapterViewSet, NovelViewSet
 
-router = DefaultRouter(trailing_slash=False)
+router = DefaultRouter(trailing_slash=True)
 router.register("categories", CategoryViewSet, basename="categories")
 router.register("novels", NovelViewSet, basename="novels")
 
