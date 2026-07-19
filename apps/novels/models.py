@@ -6,6 +6,19 @@ from django.utils.text import slugify
 from apps.moderation import validate_text_fields
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=30, unique=True)
+    description = models.TextField(blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Categories"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class Tag(models.Model):
     name = models.CharField(max_length=30, unique=True)
 
@@ -28,7 +41,7 @@ class Novel(models.Model):
     slug = models.SlugField(max_length=230, unique=True, blank=True)
     cover_url = models.URLField(blank=True, default="")
     summary = models.TextField(blank=True, default="")
-    category = models.CharField(max_length=64, default="未分类")
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="novels")
     tags = models.ManyToManyField(Tag, blank=True, related_name="novels")
     status = models.CharField(max_length=16, choices=PublishStatus.choices, default=PublishStatus.ONGOING)
     review_status = models.CharField(max_length=16, choices=ReviewStatus.choices, default=ReviewStatus.PENDING)
@@ -48,7 +61,7 @@ class Novel(models.Model):
         ]
 
     def save(self, *args, **kwargs):
-        validate_text_fields(title=self.title, summary=self.summary, category=self.category)
+        validate_text_fields(title=self.title, summary=self.summary)
         if not self.slug:
             base = slugify(self.title)[:180] or f"novel-{timezone.now().timestamp():.0f}"
             slug = base

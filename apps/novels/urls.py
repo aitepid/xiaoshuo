@@ -1,9 +1,10 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import include, path
 
-from .views import ChapterViewSet, NovelViewSet
+from .views import CategoryViewSet, ChapterViewSet, NovelViewSet
 
 router = DefaultRouter(trailing_slash=False)
+router.register("categories", CategoryViewSet, basename="categories")
 router.register("novels", NovelViewSet, basename="novels")
 
 chapter_list = ChapterViewSet.as_view({"get": "list"})

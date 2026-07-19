@@ -1,7 +1,14 @@
 from django.contrib import admin
 from django.contrib import messages
 
-from .models import Chapter, Novel, Tag
+from .models import Category, Chapter, Novel, Tag
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "created_at")
+    search_fields = ("name",)
+    ordering = ("-created_at",)
 
 
 @admin.register(Tag)

@@ -5,8 +5,15 @@ from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import Chapter, Novel
-from .serializers import ChapterDetailSerializer, ChapterListSerializer, NovelDetailSerializer, NovelListSerializer
+from .models import Category, Chapter, Novel
+from .serializers import CategorySerializer, ChapterDetailSerializer, ChapterListSerializer, NovelDetailSerializer, NovelListSerializer
+
+
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.AllowAny]
+    pagination_class = None
 
 
 class NovelViewSet(viewsets.ReadOnlyModelViewSet):

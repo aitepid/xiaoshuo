@@ -1,6 +1,12 @@
 from rest_framework import serializers
 
-from .models import Chapter, Novel, Tag
+from .models import Category, Chapter, Novel, Tag
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ["id", "name", "description"]
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -11,6 +17,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 class NovelListSerializer(serializers.ModelSerializer):
     author_name = serializers.CharField(source="author.username", read_only=True)
+    category = CategorySerializer(read_only=True)
 
     class Meta:
         model = Novel
