@@ -4,11 +4,36 @@
 
 ## 当前完成度
 
-- 已完成商用级 Web 前端
-- 已完成 Capacitor 原生封装基建
-- 已完成 AI 自动化写作 Worker
-- 已完成审核后台与敏感词过滤
-- 已完成生产部署编排与 Nginx 配置
+- ✅ 已完成商用级 Web 前端
+- ✅ 已完成 Capacitor 原生封装基建
+- ✅ 已完成 AI 自动化写作 Worker
+- ✅ 已完成审核后台与敏感词过滤
+- ✅ 已完成生产部署编排与 Nginx 配置
+- ✨ **[新增] Agnes 智能体系统** - 自动生成 3000+ 章小说
+- ✨ **[新增] 前端小说显示优化** - 正确显示所有小说和章节数统计
+
+## 🚀 Agnes 智能体系统
+
+Agnes 是一个自动小说生成智能体，支持：
+
+- **自动化生成** - 每 30 分钟自动生成一部新小说
+- **高质量内容** - 每部 3000+ 章，每章 3000+ 字
+- **多样化类型** - 11 种小说类型循环生成，永不重复
+- **自动发布** - 生成的小说直接显示在前端
+
+**快速开始：**
+```bash
+# 启动 Agnes（立即执行一次）
+python manage.py start_agnes --now
+
+# 启动定时任务（每 30 分钟自动生成）
+python manage.py start_agnes --interval 30
+
+# 或通过 API 触发
+curl -X POST http://127.0.0.1:8000/api/v1/agnes/generate-novel/
+```
+
+📖 [完整使用指南](AGNES_GUIDE.md) | 🎯 [快速开始](QUICK_START.md)
 
 ## 技术栈
 
@@ -19,6 +44,8 @@
 - PostgreSQL（主库）
 - Redis（缓存与消息队列）
 - Celery（异步任务基础）
+- **Anthropic Claude API**（AI 内容生成）
+- **APScheduler**（定时任务调度）
 - Docker + docker-compose（部署与联调）
 - Vue 3 + Vite + TypeScript + Tailwind
 - Capacitor（Android / iOS 打包）
