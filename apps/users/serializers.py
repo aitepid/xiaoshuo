@@ -21,14 +21,33 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ["username", "email", "phone", "password", "role"]
 
     def validate(self, attrs):
-        if not attrs.get("email") and not attrs.get("phone"):
-            raise serializers.ValidationError("邮箱或手机号至少填写一个。")
+        email = attrs.get("email", "").strip()
+        phone = attrs.get("phone", "").strip()
+        
+        if not email and not phone:
+            raise serializers.ValidationError({
+                "email": "邮箱或手机号至少填写一个。",
+                "phone": "邮箱或手机号至少填写一个。"
+            })
+        
+        # 检查邮箱是否已存在
+        if email and User.objects.filter(email=email).exists():
+            raise serializers.ValidationError({
+                "email": "该邮箱已被注册。"
+            })
+        
+        # 检查手机号是否已存在
+        if phone and User.objects.filter(phone=phone).exists():
+            raise serializers.ValidationError({
+                "phone": "该手机号已被注册。"
+            })
+        
         return attrs
 
     def create(self, validated_data):
-        username = validated_data.get("username")
+        username = validated_data.get("username", "").strip()
         if not username:
-            seed = validated_data.get("email") or validated_data.get("phone") or "reader"
+            seed = validated_data.get("email") or validated_data.get("phone") or "user"
             username = seed.split("@")[0]
             base = username
             index = 1
@@ -36,6 +55,12 @@ class RegisterSerializer(serializers.ModelSerializer):
                 index += 1
                 username = f"{base}{index}"
             validated_data["username"] = username
+
+        # 检查用户名是否已存在
+        if User.objects.filter(username=validated_data["username"]).exists():
+            raise serializers.ValidationError({
+                "username": "该用户名已被注册。"
+            })
 
         password = validated_data.pop("password")
         user = User.objects.create_user(**validated_data)
